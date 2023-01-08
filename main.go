@@ -15,8 +15,9 @@ import (
 
 type User struct {
 	gorm.Model
-	ID   int    `json:"id"`
-	Name string `json:"name"`
+	Name  string `json:"name"`
+	Age   int    `json:"age"`
+	Email string `json:"email"`
 }
 
 type Todo struct {
@@ -27,17 +28,17 @@ type Todo struct {
 
 // DBマイグレート
 func dbInit() {
-	db, err := gorm.Open("mysql", "tester:secret@tcp(db:3306)/test?parseTime=true")
+	db, err := gorm.Open("mysql", "root:secret@tcp(db:3306)/sample?parseTime=true")
 	if err != nil {
 		panic("データベース開けず!（dbInit）")
 	}
-	db.AutoMigrate(&Todo{})
+	db.AutoMigrate(&Todo{}, &User{})
 	defer db.Close()
 }
 
 // DB追加
 func dbInsert(text string, status string) {
-	db, err := gorm.Open("mysql", "tester:secret@tcp(db:3306)/test?parseTime=true")
+	db, err := gorm.Open("mysql", "root:secret@tcp(db:3306)/sample?parseTime=true")
 	if err != nil {
 		panic("データベース開けず！（dbInsert)")
 	}
@@ -47,7 +48,7 @@ func dbInsert(text string, status string) {
 
 // DB全取得
 func dbGetAll() []Todo {
-	db, err := gorm.Open("mysql", "tester:secret@tcp(db:3306)/test?parseTime=true")
+	db, err := gorm.Open("mysql", "root:secret@tcp(db:3306)/sample?parseTime=true")
 	if err != nil {
 		panic("データベース開けず！(dbGetAll())")
 	}
@@ -120,7 +121,7 @@ func main() {
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*.html")
 
-	// dbInit()
+	dbInit()
 
 	//Index
 	r.GET("/", func(ctx *gin.Context) {
