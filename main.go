@@ -2,6 +2,7 @@ package main
 
 import (
 	"app/controller"
+	"app/models"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -26,18 +27,9 @@ type Todo struct {
 
 // DBマイグレート
 func dbInit() {
-	db := GetDBConnection()
+	db := models.GetDBConnection()
 	db.AutoMigrate(&Todo{}, &User{})
 	defer db.Close()
-}
-
-func GetDBConnection() *gorm.DB {
-	db, err := gorm.Open("mysql", "root:secret@tcp(db:3306)/sample?parseTime=true")
-
-	if err != nil {
-		panic(err.Error())
-	}
-	return db
 }
 
 func main() {
