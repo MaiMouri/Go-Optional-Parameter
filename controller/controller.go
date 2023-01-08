@@ -2,6 +2,7 @@ package controller
 
 import (
 	"app/models"
+	"fmt"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -10,8 +11,9 @@ import (
 // DB追加
 func DbInsert(c *gin.Context) {
 	var todo models.Todo
-	todo.Text = c.Param("text")
-	todo.Status = c.Param("status")
+	todo.Text = c.PostForm("text")
+	todo.Status = c.PostForm("status")
+	fmt.Println(todo.Text, todo.Status)
 	models.CreateTodo(&todo)
 	c.Redirect(301, "/")
 }
