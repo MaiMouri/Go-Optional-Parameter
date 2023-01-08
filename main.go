@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -28,10 +26,7 @@ type Todo struct {
 
 // DBマイグレート
 func dbInit() {
-	db, err := gorm.Open("mysql", "root:secret@tcp(db:3306)/sample?parseTime=true")
-	if err != nil {
-		panic("データベース開けず!（dbInit）")
-	}
+	db := GetDBConnection()
 	db.AutoMigrate(&Todo{}, &User{})
 	defer db.Close()
 }
@@ -48,10 +43,7 @@ func dbInsert(text string, status string) {
 
 // DB全取得
 func dbGetAll() []Todo {
-	db, err := gorm.Open("mysql", "root:secret@tcp(db:3306)/sample?parseTime=true")
-	if err != nil {
-		panic("データベース開けず！(dbGetAll())")
-	}
+	db := GetDBConnection()
 	var todos []Todo
 	db.Order("created_at desc").Find(&todos)
 	db.Close()
@@ -60,10 +52,7 @@ func dbGetAll() []Todo {
 
 // DB一つ取得
 func dbGetOne(id int) Todo {
-	db, err := gorm.Open("mysql", "tester:secret@tcp(db:3306)/test?parseTime=true")
-	if err != nil {
-		panic("データベース開けず！(dbGetOne())")
-	}
+	db := GetDBConnection()
 	var todo Todo
 	db.First(&todo, id)
 	db.Close()
@@ -72,10 +61,7 @@ func dbGetOne(id int) Todo {
 
 // DB更新
 func dbUpdate(id int, text string, status string) {
-	db, err := gorm.Open("mysql", "tester:secret@tcp(db:3306)/test?parseTime=true")
-	if err != nil {
-		panic("データベース開けず！（dbUpdate)")
-	}
+	db := GetDBConnection()
 	var todo Todo
 	db.First(&todo, id)
 	todo.Text = text
@@ -86,10 +72,7 @@ func dbUpdate(id int, text string, status string) {
 
 // DB削除
 func dbDelete(id int) {
-	db, err := gorm.Open("mysql", "tester:secret@tcp(db:3306)/test?parseTime=true")
-	if err != nil {
-		panic("データベース開けず！（dbDelete)")
-	}
+	db := GetDBConnection()
 	var todo Todo
 	db.First(&todo, id)
 	db.Delete(&todo)
@@ -97,25 +80,13 @@ func dbDelete(id int) {
 }
 
 func GetDBConnection() *gorm.DB {
-	db, err := gorm.Open("mysql", "tester:secret@tcp(db:3306)/test?parseTime=true")
+	db, err := gorm.Open("mysql", "root:secret@tcp(db:3306)/sample?parseTime=true")
 
 	if err != nil {
 		panic(err.Error())
 	}
 	return db
 }
-
-func homePage(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to the HomePage!")
-	fmt.Println("Endpoint Hit: homePage")
-}
-
-// func userPage(w http.ResponseWriter, r *http.Request) {
-// 	users := getUsers()
-
-// 	fmt.Println("Endpoint Hit: usersPage")
-// 	json.NewEncoder(w).Encode(users)
-// }
 
 func main() {
 	r := gin.Default()
