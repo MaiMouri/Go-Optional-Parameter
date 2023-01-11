@@ -2,6 +2,7 @@ package main
 
 import (
 	"app/controller"
+	database "app/infrastructure"
 	"app/models"
 
 	"github.com/gin-gonic/gin"
@@ -33,6 +34,16 @@ func dbInit() {
 }
 
 func main() {
+	db := database.New()
+	connect := db.DB()
+	defer connect.Close()
+
+	//DI
+	// var customerRepository repository.CustomerRepository
+	// customerPersistance := persistance.NewCustomerPersistance(db, customerRepository)
+	// customerUseCase := usecase.NewCustomerUseCase(customerPersistance)
+	// customerController := controller.NewCustomerController(customerUseCase)
+
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*.html")
 
