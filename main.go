@@ -4,6 +4,7 @@ import (
 	database "app/config/database"
 	"app/controller"
 	"app/models"
+	"fmt"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
@@ -33,6 +34,20 @@ func dbInit() {
 	defer db.Close()
 }
 
+type GreetOpts struct {
+	GreetingWord *string
+}
+
+// オプショナルパラメータを構造体で受け取る
+func Greet(name string, opts *GreetOpts) {
+	greetingWord := "Hello"
+	if opts.GreetingWord != nil {
+		// 引数がnilだったら未指定なのでデフォルト値で埋める
+		greetingWord = *opts.GreetingWord
+	}
+	fmt.Printf("%s, %s!\n", greetingWord, name)
+}
+
 func main() {
 	db := database.New()
 	connect := db.DB()
@@ -43,6 +58,11 @@ func main() {
 	// customerPersistance := persistance.NewCustomerPersistance(db, customerRepository)
 	// customerUseCase := usecase.NewCustomerUseCase(customerPersistance)
 	// customerController := controller.NewCustomerController(customerUseCase)
+
+	Greet("gopher", &GreetOpts{}) // Hello, gopher!
+
+	word := "Hey"
+	Greet("gopher", &GreetOpts{GreetingWord: &word}) // Hey, gopher!
 
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*.html")
