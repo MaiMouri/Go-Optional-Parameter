@@ -1,4 +1,4 @@
-# go_template_mysql
+# Go-Optionao-Parameter
 
 ```go
 package main
@@ -41,4 +41,30 @@ func main(){
     fmt.Println("構造体の未指定フィールドがポインタだとnilが自動で入れられて明示的")
     fmt.Println(MemberMap[1], MemberMap[2].Age, MemberMap[3])
 }
+```
+
+
+
+# 実行方法別のアウトプットの違い
+
+## 1. 実行コマンドで引数を渡す
+
+```shell
+go run main.go -code UK -o dry-run
+```
+
+```shell
+With run option
+Hello, UK!
+```
+
+## 2. 実行コマンドで-codeを渡さない
+
+```shell
+go run main.go -o dry-run
+```
+
+```shell
+With run option
+Hello, World!
 ```
