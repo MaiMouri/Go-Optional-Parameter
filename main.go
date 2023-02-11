@@ -1,37 +1,14 @@
 package main
 
 import (
-	database "app/config/database"
-	"app/controller"
-	"app/models"
+	"flag"
 	"fmt"
-
-	"github.com/gin-gonic/gin"
-	_ "github.com/go-sql-driver/mysql"
-
-	// gorm
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-type User struct {
-	gorm.Model
-	Name  string `json:"name"`
-	Age   int    `json:"age"`
-	Email string `json:"email"`
-}
+var code string
 
-type Todo struct {
-	gorm.Model
-	Text   string
-	Status string
-}
-
-// DBマイグレート
-func dbInit() {
-	db := models.GetDBConnection()
-	db.AutoMigrate(&Todo{}, &User{})
-	defer db.Close()
+func init() {
+	flag.StringVar(&code, "code", "default", "code")
 }
 
 type GreetOpts struct {
@@ -49,40 +26,12 @@ func Greet(name string, opts *GreetOpts) {
 }
 
 func main() {
-	db := database.New()
-	connect := db.DB()
-	defer connect.Close()
-
-	//DI
-	// var customerRepository repository.CustomerRepository
-	// customerPersistance := persistance.NewCustomerPersistance(db, customerRepository)
-	// customerUseCase := usecase.NewCustomerUseCase(customerPersistance)
-	// customerController := controller.NewCustomerController(customerUseCase)
+	flag.Parse()
 
 	Greet("gopher", &GreetOpts{}) // Hello, gopher!
 
 	word := "Hey"
 	Greet("gopher", &GreetOpts{GreetingWord: &word}) // Hey, gopher!
 
-	r := gin.Default()
-	r.LoadHTMLGlob("templates/*.html")
 
-	dbInit()
-
-	//Index
-	r.GET("/", controller.DbGetAll)
-
-	//Create
-	r.POST("/new", controller.DbInsert)
-
-	//Detail
-	r.GET("/detail/:id", controller.DbGetOne)
-
-	//削除確認
-	r.GET("/delete_check/:id", controller.DbDeleteCheck)
-
-	//Delete
-	r.POST("/delete/:id", controller.DbDelete)
-
-	r.Run(":8080")
 }
