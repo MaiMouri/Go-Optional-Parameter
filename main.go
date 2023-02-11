@@ -3,12 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-
-	_ "github.com/go-sql-driver/mysql"
-
-	// gorm
-
-	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 var code string
@@ -38,5 +32,6 @@ func main() {
 
 	word := "Hey"
 	Greet("gopher", &GreetOpts{GreetingWord: &word}) // Hey, gopher!
+
 
 }
